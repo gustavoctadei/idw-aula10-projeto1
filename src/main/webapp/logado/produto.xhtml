@@ -49,6 +49,13 @@
                         </p:column>
                     </sec:authorize>
                 </p:dataTable>
+                
+                <div style="text-align: right">
+                    <h:commandLink action="#{relatorioBean.relatorioProdutos()}">
+                        <h:graphicImage library="images" name="pdf.png" />
+                    </h:commandLink>
+                </div>
+                
             </h:form>
             <br/>
             

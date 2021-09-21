@@ -70,10 +70,14 @@
                         <p:dataExporter type="xls" target="tableFornecedor" fileName="fornecedores" />
                     </h:commandLink>
 
-                    <h:commandLink>
+                    <h:commandLink action="#{relatorioBean.relatorioFornecedores()}">
                         <h:graphicImage library="images" name="pdf.png" />
-                        <p:dataExporter type="pdf" target="tableFornecedor" fileName="fornecedores" />
                     </h:commandLink>
+
+                    <!--                    <h:commandLink>
+                                            <h:graphicImage library="images" name="pdf.png" />
+                                            <p:dataExporter type="pdf" target="tableFornecedor" fileName="fornecedores" />
+                                        </h:commandLink>-->
 
                     <h:commandLink>
                         <h:graphicImage library="images" name="impressora.png" />
@@ -81,10 +85,10 @@
                     </h:commandLink>
                 </div>
                 <br/>
-                
+
                 <p:confirmDialog id="idConfirm" widgetVar="wgtConfirm" global="true">  
-                        <p:commandButton value="Sim" title="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>  
-                        <p:commandButton value="Não" title="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>       
+                    <p:commandButton value="Sim" title="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>  
+                    <p:commandButton value="Não" title="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>       
                 </p:confirmDialog>
             </h:form>
             <br/><br/>
