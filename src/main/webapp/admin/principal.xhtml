@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:composition template="/templates/admin.xhtml">
+        <ui:define name="titulo">Cadastro de Usuários</ui:define>
+
+        <ui:define name="corpo">
+            <h1>Cadastro de Usuários</h1>
+
+            <h:form>
+                <h:messages />
+                <h:dataTable value="#{administrativoBean.listaUsuario}" var="usuario" rules="rows" cellpadding="5">
+                    <f:facet name="caption">
+                        A listagem abaixo exibe a relação de todos os usuários do sistema.
+                        Você poderá realizar a ativação e desativação, edição e exclusão dos usuários.
+                    </f:facet>
+
+                    <f:facet name="header">Listagem de Usuários</f:facet>
+
+                    <h:column>
+                        <h:commandLink action="#{administrativoBean.ativar()}" rendered="#{!usuario.ativo}">
+                            <h:graphicImage library="images" name="usuario_ativo_false.png" style="border: 0" />
+                            <f:setPropertyActionListener target="#{administrativoBean.currentUsuario}" value="#{usuario}" />
+                        </h:commandLink>
+
+                        <h:commandLink action="#{administrativoBean.desativar()}" rendered="#{usuario.ativo}">
+                            <h:graphicImage library="images" name="usuario_ativo_true.png" style="border: 0" />
+                            <f:setPropertyActionListener target="#{administrativoBean.currentUsuario}" value="#{usuario}" />
+                        </h:commandLink>
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">ID</f:facet>
+                        <h:outputText value="#{usuario.idUsuario}" />
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">Nome</f:facet>
+                        <h:outputText value="#{usuario.nome}" />
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">e-Mail</f:facet>
+                        <a href="mailto:#{usuario.email}">#{usuario.email}</a>
+                    </h:column>
+
+                    <h:column>
+                        <h:commandLink action="#{administrativoBean.editar()}">
+                            <h:graphicImage library="images" name="editar16.png" style="border: 0" />
+                            <f:setPropertyActionListener target="#{administrativoBean.currentUsuario}" value="#{usuario}" />
+                        </h:commandLink>
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">Permissões</f:facet>
+                        <h:commandLink action="#{administrativoBean.atribuiPermissaoAdministrador()}" title="Permissão Administrador" rendered="#{!usuario.hasRole('ROLE_ADMINISTRADOR')}" >
+                            <h:graphicImage library="images" name="ROLE_ADMINISTRADOR_false.png" />
+                            <f:setPropertyActionListener target="#{administrativoBean.currentUsuario}" value="#{usuario}" />
+                        </h:commandLink>
+                        <h:commandLink action="#{administrativoBean.removePermissaoAdministrador()}" title="Permissão Administrador" rendered="#{usuario.hasRole('ROLE_ADMINISTRADOR')}" >
+                            <h:graphicImage library="images" name="ROLE_ADMINISTRADOR_true.png" />
+                            <f:setPropertyActionListener target="#{administrativoBean.currentUsuario}" value="#{usuario}" />
+                        </h:commandLink>
+
+                        <h:commandLink action="#{administrativoBean.atribuiPermissaoUsuarioVip()}" title="Permissão Usuário VIP" rendered="#{!usuario.hasRole('ROLE_USUARIO_VIP')}" >
+                            <h:graphicImage library="images" name="ROLE_USUARIO_VIP_false.png" />
+                            <f:setPropertyActionListener target="#{administrativoBean.currentUsuario}" value="#{usuario}" />
+                        </h:commandLink>
+                        <h:commandLink action="#{administrativoBean.removePermissaoUsuarioVip()}" title="Permissão Usuário VIP" rendered="#{usuario.hasRole('ROLE_USUARIO_VIP')}" >
+                            <h:graphicImage library="images" name="ROLE_USUARIO_VIP_true.png" />
+                            <f:setPropertyActionListener target="#{administrativoBean.currentUsuario}" value="#{usuario}" />
+                        </h:commandLink>
+                    </h:column>
+
+                    <h:column>
+                        <h:commandLink action="#{administrativoBean.excluir()}"
+                                       onclick="if (!confirm('Confirma a exclusão do usuário #{usuario.nome}?'))
+                                               return false;">
+                            <h:graphicImage library="images" name="excluir16.png" style="border: 0" />
+                            <f:setPropertyActionListener target="#{administrativoBean.currentUsuario}" value="#{usuario}" />
+                        </h:commandLink>
+                    </h:column>
+
+                    <f:facet name="footer">Final da listagem</f:facet>
+                </h:dataTable>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:sec="http://www.springframework.org/security/tags"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/templates/interna.xhtml">
+        <ui:define name="titulo">Cadastro de Fornecedores</ui:define>
+
+        <ui:define name="corpo">
+            <h:form id="listaFornecedor">
+                <p:growl />
+
+                <p:commandButton action="#{fornecedorBean.novo()}" value="Novo Fornecedor" update="dialogFornecedor" />
+                <br/><br/>
+
+                <p:dataTable id="tableFornecedor" emptyMessage="Sem fornecedores cadastrados!" value="#{fornecedorBean.listaFornecedor}" var="fornecedor">
+                    <f:facet name="header">Lista de Fornecedores</f:facet>
+
+                    <p:column headerText="Nome" filterBy="#{fornecedor.nome}">
+                        <h:outputText value="#{fornecedor.nome}" />
+                    </p:column>
+
+                    <p:column headerText="CNPJ" filterBy="#{fornecedor.cnpj}">
+                        <h:outputText value="#{fornecedor.cnpj}" />
+                    </p:column>
+
+                    <p:column headerText="E-mail">
+                        <h:outputText value="#{fornecedor.email}" />
+                    </p:column>
+
+                    <p:column headerText="Telefone">
+                        <h:outputText value="#{fornecedor.telefone}" />
+                    </p:column>
+
+                    <p:column headerText="Endereço">
+                        <h:outputText value="#{fornecedor.endereco}" />
+                    </p:column>
+
+                    <p:column headerText="Data Cadastro">
+                        <h:outputText value="#{fornecedor.dataCadastro}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </p:column>
+
+                    <sec:authorize ifAnyGranted="ROLE_USUARIO_VIP">
+                        <p:column exportable="false">
+                            <f:facet name="header">Ações</f:facet>
+
+                            <p:commandLink action="#{fornecedorBean.excluir()}" update="listaFornecedor">
+                                <h:graphicImage library="images" name="excluir16.png" />
+                                <p:confirm header="Atenção!" message="Deseja realmente excluir o Fornecedor?" />
+                                <f:setPropertyActionListener target="#{fornecedorBean.currentFornecedor}" value="#{fornecedor}" />
+                            </p:commandLink>
+
+                            <p:commandLink action="#{fornecedorBean.editar()}" update="dialogFornecedor">
+                                <h:graphicImage library="images" name="editar16.png" />
+                                <f:setPropertyActionListener target="#{fornecedorBean.currentFornecedor}" value="#{fornecedor}" />
+                            </p:commandLink>
+                        </p:column>
+                    </sec:authorize>
+                </p:dataTable>
+                <br/><br/>
+
+                <div style="text-align: right">
+                    <h:commandLink>
+                        <h:graphicImage library="images" name="excel.png" />
+                        <p:dataExporter type="xls" target="tableFornecedor" fileName="fornecedores" />
+                    </h:commandLink>
+
+                    <h:commandLink>
+                        <h:graphicImage library="images" name="pdf.png" />
+                        <p:dataExporter type="pdf" target="tableFornecedor" fileName="fornecedores" />
+                    </h:commandLink>
+
+                    <h:commandLink>
+                        <h:graphicImage library="images" name="impressora.png" />
+                        <p:printer target="tableFornecedor"/>
+                    </h:commandLink>
+                </div>
+                <br/>
+                
+                <p:confirmDialog id="idConfirm" widgetVar="wgtConfirm" global="true">  
+                        <p:commandButton value="Sim" title="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>  
+                        <p:commandButton value="Não" title="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>       
+                </p:confirmDialog>
+            </h:form>
+            <br/><br/>
+
+            <p:dialog id="dialogFornecedor" modal="true" widgetVar="modalFornecedor" header="Cadastro de Fornecedor">
+                <h:form>
+                    <p:panelGrid columns="2">
+                        <p:outputLabel value="Nome" for="nome" />
+                        <p:inputText id="nome" label="nome" value="#{fornecedorBean.currentFornecedor.nome}" maxlength="155" required="true" requiredMessage="O campo nome é obrigatório." />
+
+                        <p:outputLabel value="CNPJ" for="cnpj" />
+                        <p:inputText id="cnpj" label="cnpj" value="#{fornecedorBean.currentFornecedor.cnpj}" required="true" maxlength="14" requiredMessage="O campo CNPJ é obrigatório." />
+
+                        <p:outputLabel value="E-mail" for="email" />
+                        <p:inputText id="email" label="email" value="#{fornecedorBean.currentFornecedor.email}" required="true" requiredMessage="O campo E-mail é obrigatório">
+                            <f:validateRegex pattern="[a-zA-Z0-9\-\_\.]+@[a-zA-z0-9\-\_\.]+" />
+                        </p:inputText>
+
+                        <p:outputLabel value="Telefone" for="telefone" />
+                        <p:inputText id="telefone" label="telefone" value="#{fornecedorBean.currentFornecedor.telefone}" maxlength="12" />
+
+                        <p:outputLabel value="Endereço" for="endereco" />
+                        <p:inputTextarea id="endereco" label="endereco" value="#{fornecedorBean.currentFornecedor.endereco}" rows="2" cols="60" />
+
+                        <p:commandButton action="#{fornecedorBean.salvar()}" value="Salvar" update="listaFornecedor">
+                            <p:confirm header="Atenção!" message="Deseja realmente realizar a operação?" />
+                        </p:commandButton>
+                    </p:panelGrid>
+
+                    <p:confirmDialog id="idConfirm" widgetVar="wgtConfirm" global="true">  
+                        <p:commandButton value="Sim" title="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>  
+                        <p:commandButton value="Não" title="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>       
+                    </p:confirmDialog>
+                </h:form>
+            </p:dialog>
+
+        </ui:define>
+    </ui:composition>
+</html>

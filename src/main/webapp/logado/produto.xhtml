@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:sec="http://www.springframework.org/security/tags"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/templates/interna.xhtml">
+        <ui:define name="titulo">Cadastro de Produtos</ui:define>
+
+        <ui:define name="corpo">
+            <h:form id="listaProduto">
+                <p:dataTable emptyMessage="Sem produtos cadastrados!" value="#{produtoBean.listaProduto}" var="produto">
+                    <f:facet name="header">Lista de Produtos</f:facet>
+                    
+                    <p:column filterBy="#{produto.nome}">
+                        <f:facet name="header">Nome do Produto</f:facet>
+                        <h:outputText value="#{produto.nome}" />
+                    </p:column>
+                    
+                    <p:column filterBy="#{produto.quantidade}" sortBy="#{produto.quantidade}">
+                        <f:facet name="header">Qnt.</f:facet>
+                        <h:outputText value="#{produto.quantidade}" />
+                    </p:column>
+                    
+                    <p:column filterBy="#{produto.preco}" sortBy="#{produto.preco}">
+                        <f:facet name="header">Preço</f:facet>
+                        <h:outputText value="#{produto.preco}">
+                            <f:convertNumber type="currency" minFractionDigits="2" maxFractionDigits="2" />
+                        </h:outputText>
+                    </p:column>
+                    
+                    <sec:authorize ifAnyGranted="ROLE_USUARIO_VIP">
+                        <p:column>
+                            <f:facet name="header">Ações</f:facet>
+
+                            <h:commandLink action="#{produtoBean.excluir()}" onclick="if (!confirm('Confirma a exclusão do produto #{produto.nome}?')) return false;">
+                                <f:ajax execute="@this" render=":listaProduto :editaProduto" />
+                                <h:graphicImage library="images" name="excluir16.png" />
+                                <f:setPropertyActionListener target="#{produtoBean.currentProduto}" value="#{produto}" />
+                            </h:commandLink>
+
+                            <h:commandLink>
+                                <f:ajax execute="@this" render=":editaProduto" />
+                                <h:graphicImage library="images" name="editar16.png" />
+                                <f:setPropertyActionListener target="#{produtoBean.currentProduto}" value="#{produto}" />
+                            </h:commandLink>
+                        </p:column>
+                    </sec:authorize>
+                </p:dataTable>
+            </h:form>
+            <br/>
+            
+            <h:form id="editaProduto">
+                <p:messages />
+                Cadastro de Produtos
+                
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="Nome:" for="nome" />
+                    <p:inputText id="nome" label="nome" value="#{produtoBean.currentProduto.nome}" maxlength="100" required="true" requiredMessage="O campo nome é obrigatório." />
+                    
+                    <p:outputLabel value="Quantidade:" for="quantidade" />
+                    <p:spinner id="quantidade" label="quantidade" value="#{produtoBean.currentProduto.quantidade}" required="true" requiredMessage="O campo quantidade é obrigatório." />
+                    
+                    <p:outputLabel value="Preço:" for="preco" />
+                    <p:inputText id="preco" label="preco" value="#{produtoBean.currentProduto.preco}" required="true" requiredMessage="O campo preço é obrigatório" size="20">
+                        <f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
+                    </p:inputText>
+                    
+                    <p:commandButton action="#{produtoBean.salvar()}" value="Salvar" update=":listaProduto :editaProduto" />
+                </p:panelGrid>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
